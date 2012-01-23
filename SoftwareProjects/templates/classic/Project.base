@@ -1,0 +1,9 @@
+{% extends "Project.abstract" %}
+
+{% block head %}
+{{ block.super }}
+{% endblock %}
+
+{% block projectBody %}
+{% block finalBody %}{% endblock %}
+{% endblock %}

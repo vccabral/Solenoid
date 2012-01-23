@@ -1,0 +1,2 @@
+{% include "Project.form" %}
+{% include "Project.list" %}

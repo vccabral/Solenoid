@@ -1,0 +1,6 @@
+
+<ul>
+{% for project in projectList %}
+<li><a href='{% url project_read project.id %}'>{{ project }}</a></li>
+{% endfor %}
+</ul>

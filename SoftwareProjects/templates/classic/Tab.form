@@ -1,0 +1,6 @@
+
+<form id='FormCreateTab' action='{% url tab_create curProject.id %}' method='POST'>
+{% csrf_token %}
+{{ tabForm.as_ul }}
+<input id='InputSubmitTab' type='submit' value='Add Tab' />
+</form>

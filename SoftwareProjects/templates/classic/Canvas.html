@@ -1,0 +1,110 @@
+{% extends "Project.base" %}
+
+{% block title %}Solenoid Home{% endblock %}
+
+{% block head %}
+{{ block.super }}
+<style>
+{% autoescape off %}{% for addableItem in addablePageItems %}
+.{{ addableItem.cssName }}{ position: absolute; border: solid red 1px; {{ addableItem.toCSS }} }{% endfor %}{% endautoescape %}
+.basicTab{height: 90%;}
+</style>
+<script>
+function savePageItem(tabitem){
+	var curTab = $(".ui-tabs-panel:not(.ui-tabs-hide)");
+	$("#id_height").val($(this).height());
+	$("#id_width").val($(this).width())
+	//$("#id_zindex").val($(this).css("z-index"));
+	$("#id_top").val($(this).position().top);
+	$("#id_left").val($(this).position().left);
+	$("#id_pageItem").val($(this).attr("pageItemType"));
+	$("#id_parentTabs").val(curTab.attr("tabId"));
+	var postData = $("#FormUpdateTabItem").serializeArray();
+	$.ajax({
+		url: '{% url tabitem_update curProject.id 1 %}'.replace(/1\/update\//i, $(this).attr("tabItemId")+"/update/"),
+		type: 'POST', 
+		data: postData, 
+		success: function(){
+			//alert(42);
+		}
+	});
+}
+function addPageItem(itemToAdd){
+	var curTab = $(".ui-tabs-panel:not(.ui-tabs-hide)");
+	var indexValue=curTab.attr("id");
+	if(indexValue!="tabs-0"){
+		var curPageItemId = $(itemToAdd).attr("pageItemId");
+		var curTabId = curTab.attr("tabId");
+		$("#id_pageItem").val(curPageItemId);
+		$("#id_parentTabs").val(curTabId);
+		postData = $("#FormUpdateTabItem").serializeArray();
+		$.ajax({
+			url: '{% url tabitem_create curProject.id %}', 
+			type: 'POST',
+			dataType: 'json',
+			data: $("#FormUpdateTabItem").serializeArray(),
+			success: function(data){
+			//think of refactoring this and below div into a template
+				$('<div tabItemId="'+data.pk+'" pageItemType="'+curPageItemId+'" parentTabId="'+curTab.attr("tabId")+'" class="'+$(itemToAdd).attr('cssName')+'" />').appendTo("#"+indexValue).resizable({stop: savePageItem, handles: 'n, e, s, w, ne, se, sw, nw'}).draggable({containment: "#"+indexValue, stop:savePageItem});
+			}
+		});
+	}
+}
+$(document).ready(function (){
+	$("#accordion").accordion({fillSpace: true});
+	$(".addPageItem").click(function(){addPageItem(this);});
+	$(function(){$("#tabs").tabs();});
+	$("#InputSubmitTab").click(function(){event.preventDefault(); $("#tabs-0").load('{% url tab_create curProject.id %}',$("#FormCreateTab").serializeArray()); });
+	{% for tab in tabs %}
+		$("div[parentTabId={{ tab.id }}]").resizable({stop: savePageItem, handles: 'n, e, s, w, ne, se, sw, nw'}).draggable({containment: "#tabs-{{ tab.id }}", stop:savePageItem});;
+	{% endfor %}
+});
+</script>
+{% endblock %}
+
+{% block finalBody %}
+<div id="DivWorld" class="container-fluid">
+	<div class="sidebar">
+		<h2><a href="{% url projects_read %}">Projects Home</a></h2>
+		<h2><a href="{% url sitemap_read curProject.id %}">Site Map</a></h2>
+		<h2><a href="{% url stories_read curProject.id %}">Man Hours</a></h2>
+		<div id="accordion">
+	    	{% for addableItem in addablePageItems %}
+    			{% ifchanged addableItem %}
+    				<h3><a href="#">{{ addableItem }}</a></h3>{% endifchanged %}
+    				<div><a href="#" class='addPageItem' cssName='{{ addableItem.cssName }}' pageItemId='{{ addableItem.id }}'>{{ addableItem.title }}</a></div>{% endfor %}
+		</div>
+	</div>
+	<div class="content">
+		<div id="DivCanvas">
+			<div id="tabs">
+				<ul>
+				{% for tab in tabs %}
+					<li><a href="#tabs-{{ tab.id }}">{{ tab }}</a></li>
+				{% endfor %}
+				<li><a href="#tabs-0">+ Create Tab</a></li>
+				</ul>
+				{% for tab in tabs %}
+					<div id="tabs-{{ tab.id }}" tabId="{{ tab.id }}" class="basicTab">
+						{% for tabitem in tab.tabitem_set.all %}
+							<!-- refactor below statements into 1 item -->
+							<div class='initTabItem' tabItemId="{{ tabitem.id  }}" pageItemType="{{ tabitem.pageItem.id }}" parentTabId="{{ tab.id }}" style="position: absolute; border: solid red 1px; {% autoescape off %}{{ tabitem.toCSS }};{% endautoescape %}"></div>
+						{% endfor %}
+					</div>
+				{% endfor %}
+				<div id="tabs-0" class="basicTab">
+					{% include "Tab.form" %} 
+				</div>			
+			</div>
+		</div>
+	</div>
+</div>
+<div style="display:none; position: absolute;">
+<form id="FormUpdateTabItem">
+{% csrf_token %}
+<ul>
+{{ tabItemForm.as_ul }}
+</ul>
+</form>
+</div>
+{% endblock %}

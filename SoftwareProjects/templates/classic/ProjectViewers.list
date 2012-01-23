@@ -1,0 +1,6 @@
+
+<ul>
+{% for viewer in projectViewList %}
+<li>{{ viewer }}&nbsp;(<a class='deleteUser' userid='{{ viewer.id }}' href="#">x</a>)</li>
+{% endfor %}
+</ul>

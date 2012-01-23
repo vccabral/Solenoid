@@ -1,0 +1,61 @@
+{% extends "Project.base" %}
+
+{% block title %}Solenoid Home{% endblock %}
+
+{% block head %}
+<link type="text/css" href="{{ STATIC_URL }}jquery-ui-1.8.16.custom/css/blitzer/jquery-ui-1.8.16.custom.css" rel="Stylesheet" />	
+<script type="text/javascript" src="{{ STATIC_URL }}jquery-ui-1.8.16.custom/js/jquery-1.6.2.min.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}jquery-ui-1.8.16.custom/js/jquery-ui-1.8.16.custom.min.js"></script>
+<script type='text/javascript' src='https://www.google.com/jsapi'></script>
+<script type='text/javascript'>
+$(document).ready(function (){
+});
+	google.load('visualization', '1', {packages:['orgchart']});
+	google.setOnLoadCallback(drawChart);
+    function drawChart() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Name');
+        data.addColumn('string', 'Manager');
+        data.addColumn('string', 'ToolTip');
+        data.addRows([
+        	[{v:'_0_', f:'<div tabId="">Site Root</div>'}, '', 'Root'],
+			{% for tab in tabs %}
+			//combine these lines
+			{% if tab.parentTab %}
+          	[{v:'_{{ tab.id }}_', f:'<div tabId="{{ tab.id }}" parentTabId="{{ tab.parentTab.id }}">{{ tab }}</div>'}, '_{{ tab.parentTab.id }}_', 'root child'],
+          	{% else %}
+          	[{v:'_{{ tab.id }}_', f:'<div tabId="{{ tab.id }}" parentTabId="">{{ tab }}</div>'}, '_0_', 'something stupid'],          	
+          	{% endif %}
+			{% endfor %}
+        ]);
+        var chart = new google.visualization.OrgChart(document.getElementById('chart_div'));
+        chart.draw(data, {allowHtml:true});
+		$(".google-visualization-orgchart-node").draggable({revert: 'invalid'});
+		$( ".google-visualization-orgchart-node" ).droppable({
+			accept: ".google-visualization-orgchart-node",
+			drop: function( event, ui ) {
+		    	$("#id_parentTab").val($(event.target).find("div").attr("tabId"));
+		    	$.ajax({
+    				url: '{% url tab_update curProject.id 1 %}'.replace(/update\/(\d+)\//i,"update/"+$(ui.draggable).find("div").attr("tabId")+"/"),
+    				data: $("#FormUpdateTab").serializeArray(),
+    				type: 'POST',
+    				success: function(){
+    					location.reload();
+		    		} 
+    			});
+			}
+		});
+	}
+
+</script>
+{% endblock %}
+
+{% block finalBody %}
+<ul>
+<li><a href='{% url project_canvas curProject.id %}'>Edit Wireframes</a></li>
+<li><a href='{% url sitemap_read curProject.id %}'>Site Map</a></li>
+<li><a href=''>Read-Only Wireframes</a></li>
+</ul>
+{{ storycount }}
+</div>
+{% endblock %}

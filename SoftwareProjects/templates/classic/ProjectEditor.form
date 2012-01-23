@@ -1,0 +1,6 @@
+
+<form id='FormCreateEditor' action='{% url editor_create curProject.id %}' method='POST'>
+{% csrf_token %}
+{{ editorForm.as_ul }}
+<input id='InputSubmitEditor' type='submit' value='Add Editor' />
+</form>

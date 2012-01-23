@@ -1,0 +1,6 @@
+
+<form id='FormCreateViewer' action='{% url viewer_create curProject.id %}' method='POST'>
+{% csrf_token %}
+{{ viewerForm.as_ul }}
+<input id='InputSubmitViewer' type='submit' value='Add Viewer' />
+</form>

@@ -1,0 +1,15 @@
+{% extends "Page.base" %}
+
+{% block title %}Solenoid Home{% endblock %}
+
+{% block head %}
+{{ block.super }}
+{% endblock %}
+
+{% block baseBody %}
+<form action='{% url accounts_create %}' method='POST'>
+{% csrf_token %}
+{{ registerForm.as_ul }}
+<input type='submit' value='register' />
+</form>
+{% endblock %}

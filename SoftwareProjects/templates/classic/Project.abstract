@@ -1,0 +1,9 @@
+{% extends "Page.base" %}
+
+{% block head %}
+{{ block.super }}
+{% endblock %}
+
+{% block baseBody %}
+{% block projectBody %}{% endblock %}
+{% endblock %}

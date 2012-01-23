@@ -1,0 +1,8 @@
+
+<form id='FormCreateProject' action='{% url project_create %}' method='POST'>
+{% csrf_token %}
+<ul>
+{{ projectForm.as_ul }}
+</ul>
+<input id='InputSubmitProject' type='submit' value='Add Project' />
+</form>

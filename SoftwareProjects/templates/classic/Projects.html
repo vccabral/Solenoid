@@ -1,0 +1,21 @@
+{% extends "Project.base" %}
+
+{% block title %}Solenoid Home{% endblock %}
+
+{% block head %}
+{{ block.super }}
+<script>
+$(document).ready(function (){
+    $("#InputSubmitProject").click(function(){ 
+    	event.preventDefault(); 
+    	$("#DivProjects").load('{% url project_create %}',$("#FormCreateProject").serializeArray()); 
+    });	
+});
+</script>
+{% endblock %}
+
+{% block finalBody %}
+<div id="DivProjects">
+{% include "Project.sub" %}
+</div>
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends "Page.abstract" %}
+
+{% block head %}
+{{ block.super }}
+<link type="text/css" href="{{ STATIC_URL }}bootstrap/bootstrap.min.css" rel="Stylesheet" />	
+<link type="text/css" href="{{ STATIC_URL }}jquery-ui-1.8.16.custom/css/blitzer/jquery-ui-1.8.16.custom.css" rel="Stylesheet" />	
+<script type="text/javascript" src="{{ STATIC_URL }}jquery-ui-1.8.16.custom/js/jquery-1.6.2.min.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}jquery-ui-1.8.16.custom/js/jquery-ui-1.8.16.custom.min.js"></script>
+{% endblock %}
+
+{% block abstractBody %}
+{% block baseBody %}{% endblock %}
+{% endblock %}

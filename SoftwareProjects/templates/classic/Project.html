@@ -1,0 +1,45 @@
+{% extends "Project.base" %}
+
+{% block title %}Solenoid Home{% endblock %}
+
+{% block head %}
+{{ block.super }}
+<script>
+$(document).ready(function (){
+    $("#InputSubmitProject").live("click",function(){ 
+    	event.preventDefault(); 
+    	$("#DivProjects").load('{% url project_create %}',$("#FormCreateProject").serializeArray()); 
+    });	
+    $("#InputSubmitEditor").live("click",function(){ 
+    	event.preventDefault(); 
+    	$("#DivEditors").load('{% url editor_create curProject.id %}',$("#FormCreateEditor").serializeArray()); 
+    });	
+    $("#InputSubmitViewer").live("click",function(){ 
+    	event.preventDefault(); 
+    	$("#DivViewers").load('{% url viewer_create curProject.id %}',$("#FormCreateViewer").serializeArray()); 
+    });	
+    $(".deleteUser").click(function(){
+    	//alert("try to delete "+$(this).attr("userid"));
+    	$("#DivViewers").load('{% url viewer_delete curProject.id 1 %}'.replace(/1\/delete\//i, $(this).attr("userid")+'/delete/'));
+    	alert("try to delete "+$(this).attr("userid"));
+    });
+});
+</script>
+{% endblock %}
+
+{% block finalBody %}
+<ul>
+<li><a href='{% url project_canvas curProject.id %}'>Edit Wireframes</a></li>
+<li><a href='{% url sitemap_read curProject.id %}'>Site Map</a></li>
+<li><a href=''>Read-Only Wireframes</a></li>
+</ul>
+<div id="DivProjects">
+{% include "Project.sub" %}
+</div>
+<div id="DivEditors">
+{% include "ProjectEditor.sub" %}
+</div>
+<div id="DivViewers">
+{% include "ProjectViewer.sub" %}
+</div>
+{% endblock %}

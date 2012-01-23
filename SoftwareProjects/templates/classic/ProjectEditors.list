@@ -1,0 +1,6 @@
+
+<ul>
+{% for editor in projectEditList %}
+<li>{{ editor }}</li>
+{% endfor %}
+</ul>

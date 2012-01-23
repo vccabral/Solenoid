@@ -1,0 +1,6 @@
+
+<form id='FormUpdateTab' action='{% url tab_update curProject.id 1 %}' method='POST'>
+{% csrf_token %}
+{{ tabSiteChartForm.as_ul }}
+<input id='InputSubmitTab' type='submit' value='Add Tab' />
+</form>
